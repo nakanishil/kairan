@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+
+<title>スレッド - KAIRAN</title>
+</head>
+<body>
+
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+			<div th:replace="~{fragment :: sign-in-role}"></div>
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item"><a
+						th:href="@{/message/threads/{boardTypeId}(boardTypeId=${selectedBoardType.id})}">スレッド一覧</a></li>
+					<li class="breadcrumb-item active" aria-current="page">スレッド詳細<span
+						th:text="${selectedBoardType.boardName}"></span>
+					</li>
+				</ol>
+			</nav>
+
+			<p th:if="${message != null}" class="text-center text-muted"
+				th:text="${message}"></p>
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+
+			<!-- スレッド情報 -->
+			<div class="thread-container">
+				<h3 class="thread-title">
+					タイトル:<span th:text="${thread.title}"></span>
+				</h3>
+				<!-- 本文 -->
+				<div class="thread-content">
+					<p th:text="${thread.comment}"></p>
+				</div>
+				<div class="thread-meta text-end">
+					<!-- 右側に投稿者・時刻 -->
+					<div class="thread-info">
+						<span class="thread-author"
+							th:text="${thread?.user?.name ?: '不明な投稿者'}"></span> <span
+							class="thread-time"
+							th:text="${#dates.format(thread.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
+					</div>
+					<div
+						th:if="${#authentication.principal.username == thread.user.userId}"
+						class="thread-actions">
+						<a th:href="@{/message/edit/{id}(id=${thread.id})}"
+							class="btn btn-sm btn-outline-primary">編集</a>
+						<button type="button" class="btn btn-sm btn-outline-danger"
+							data-bs-toggle="modal" data-bs-target="#deleteModal">削除
+						</button>
+					</div>
+				</div>
+
+
+			</div>
+
+			<!-- スレッド削除確認モーダル -->
+			<div class="modal fade" id="deleteModal" tabindex="-1"
+				aria-labelledby="deleteModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="deleteModalLabel">スレッド削除確認</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="閉じる"></button>
+						</div>
+						<div class="modal-body">本当にこのスレッドを削除しますか？</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-bs-dismiss="modal">キャンセル</button>
+							<form th:action="@{/thread/softdelete/{id}(id=${thread.id})}"
+								method="post">
+								<input type="hidden" name="_method" value="DELETE"> <input
+									type="hidden" name="boardTypeId" th:value="${boardTypeId}">
+								<button type="submit" class="btn btn-danger">削除する</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<hr>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>コメント(降順)</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<!-- コメントがない場合のメッセージ -->
+					<tr th:if="${replies == null or #lists.isEmpty(replies.content)}">
+						<td colspan="3" class="text-center">現在コメントがありません</td>
+					</tr>
+
+					<tr th:each="reply : ${replies.content}">
+						<td>
+							<div class="d-flex flex-column justify-content-between">
+								<!-- コメント本文 -->
+								<p class="mb-1 text-break">
+									<span th:text="${reply.comment}"></span>
+								</p>
+								<!-- 投稿者と投稿時刻 -->
+								<div class="text-end text-secondary fs-6">
+									<span th:text="${reply.user?.name ?: '不明な投稿者'}"></span> <span
+										th:text="${#dates.format(reply.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
+									<div
+										th:if="${#authentication.principal.username == reply.user.userId}"
+										class="thread-actions">
+										<a th:href="@{/message/edit/{id}(id=${reply.id})}"
+											class="btn btn-sm btn-outline-primary">編集</a>
+										<button type="button" class="btn btn-sm btn-outline-danger"
+											data-bs-toggle="modal"
+											th:attr="data-bs-target='#replyDeleteModal-' + ${reply.id}">
+											削除</button>
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+
+			<!-- コメント削除確認モーダル -->
+			<div th:each="reply : ${replies.content}">
+				<div class="modal fade" th:id="'replyDeleteModal-' + ${reply.id}"
+					tabindex="-1" aria-labelledby="replyDeleteModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="replyDeleteModalLabel">コメント削除確認</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="閉じる"></button>
+							</div>
+							<div class="modal-body">本当にこのコメントを削除しますか？</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">キャンセル</button>
+								<form th:action="@{/thread/softdelete/{id}(id=${reply.id})}"
+									method="post">
+									<input type="hidden" name="_method" value="DELETE"> <input
+										type="hidden" name="boardTypeId" th:value="${boardTypeId}">
+									<button type="submit" class="btn btn-danger">削除する</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- レス投稿フォーム -->
+			<h4>コメントを投稿</h4>
+			<form
+				th:action="@{/message/thread/{threadId}/reply(threadId=${thread.id})}"
+				th:object="${replyForm}" method="post">
+				<div>
+					<textarea th:field="*{comment}" class="form-control" rows="3"
+						placeholder="内容 (必須 1,000文字以内)"></textarea>
+					<p class="text-danger" th:if="${#fields.hasErrors('comment')}"
+						th:errors="*{comment}"></p>
+				</div>
+				<button type="submit" class="btn btn-primary mt-2 w-100">送信</button>
+			</form>
+
+			<!-- ページネーション -->
+			<nav aria-label="ページネーション">
+				<ul class="pagination justify-content-center">
+					<li class="page-item"
+						th:classappend="${replies.hasPrevious()} ? '' : 'disabled'">
+						<a class="page-link"
+						th:href="@{/message/thread/{threadId}(threadId=${threadId}, boardTypeId=${selectedBoardType.id}, page=${replies.number - 1})}">前へ</a>
+					</li>
+					<li class="page-item disabled"><span class="page-link"
+						th:text="${replies.number + 1} + ' / ' + ${replies.totalPages}"></span>
+					</li>
+					<li class="page-item"
+						th:classappend="${replies.hasNext()} ? '' : 'disabled'"><a
+						class="page-link"
+						th:href="@{/message/thread/{threadId}(threadId=${threadId}, boardTypeId=${selectedBoardType.id}, page=${replies.number + 1})}">次へ</a>
+					</li>
+				</ul>
+			</nav>
+
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+</body>
+</html>

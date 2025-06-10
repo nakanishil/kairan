@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>マイページ - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">マイページ</li>
+				</ol>
+			</nav>
+
+			<!-- メッセージ -->
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+			<!-- ユーザ情報 -->
+			<div class="container mt-4">
+				<div class="card">
+					<div class="card-body">
+						<h2 class="text-center pb-3">あなたの情報</h2>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">メールアドレス：</div>
+							<div class="col-7 text-start px-0">
+								<span th:text="${email}"
+									class="border-bottom d-inline-block ms-4"></span>
+							</div>
+						</div>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">ユーザID：</div>
+							<div class="col-7 text-start px-0">
+								<span th:text="${userId}"
+									class="border-bottom d-inline-block ms-4"></span>
+							</div>
+						</div>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">パスワード：</div>
+							<div class="col-7 text-start px-0">
+								<span class="border-bottom d-inline-block ms-4">セキュリティのため非表示</span>
+							</div>
+						</div>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">氏名：</div>
+							<div class="col-7 text-start px-0">
+								<span th:text="${name}"
+									class="border-bottom d-inline-block ms-4"></span>
+							</div>
+						</div>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">フリガナ：</div>
+							<div class="col-7 text-start px-0">
+								<span th:text="${furigana}"
+									class="border-bottom d-inline-block ms-4"></span>
+							</div>
+						</div>
+						<div class="row mb-2 text-center">
+							<div class="col-5 fw-bold text-end px-0">電話番号：</div>
+							<div class="col-7 text-start px-0">
+								<span th:text="${phoneNumber}"
+									class="border-bottom d-inline-block ms-4"></span>
+							</div>
+						</div>
+						<div class=" text-center mt-3">
+							<div th:if="${!user.googleLinked}">
+								<a href="/link/google" class="btn btn-outline-success">
+									Googleアカウントと連携する </a>
+							</div>
+							<div th:if="${user.googleLinked}">
+								<button type="button" class="btn btn-secondary">✅ Googleアカウントと連携済みです</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="btncontainer text-center mt-3">
+				<a th:href="@{/user/edit-page}" class="btn btn-danger">編集</a> <a
+					th:href="@{/}" class="btn btn-secondary ms-3">戻る</a>
+			</div>
+		</div>
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>回覧板登録 - KAIRAN</title>
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<div class="container kairan-container mt-4">
+			<div th:replace="~{fragment :: sign-in-name}"></div>
+
+			<!-- パンくず -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item"><a
+						th:href="@{/circular/control-page}">回覧板管理</a></li>
+					<li class="breadcrumb-item active" aria-current="page">登録</li>
+				</ol>
+			</nav>
+
+			<h2 class="mb-4">回覧板を登録</h2>
+
+			<!-- 全体エラーメッセージ -->
+			<div th:if="${errorMessage}" class="alert alert-danger text-center">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<form th:action="@{/circular/control/register}" th:object="${form}"
+				method="post" enctype="multipart/form-data">
+
+				<!-- 名前 -->
+				<div class="mb-3">
+					<label class="form-label">回覧板の名前</label> <input type="text"
+						th:field="*{name}" class="form-control"
+						th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" />
+					<div class="invalid-feedback" th:errors="*{name}"></div>
+				</div>
+
+				<!-- 説明 -->
+				<div class="mb-3">
+					<label class="form-label">説明</label>
+					<textarea th:field="*{description}" class="form-control" rows="4"
+						th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+					<div class="invalid-feedback" th:errors="*{description}"></div>
+				</div>
+
+				<!-- 緊急ラベル -->
+				<div class="form-check form-switch mb-3">
+					<input type="checkbox" th:field="*{isUrgent}"
+						class="form-check-input" /> <label class="form-check-label">緊急ラベルをつける</label>
+				</div>
+
+				<!-- ファイル添付フォーム -->
+				<div id="fileUploadArea">
+					<div class="file-upload-item mb-3 border p-3 rounded">
+						<label class="form-label">ファイル1 (10MBまで)：</label> <input
+							type="file" name="fileList[0].file" class="form-control mb-2"
+							onchange="addFileInput(this)" /> <input type="text"
+							name="fileList[0].fileName" placeholder="表示名を入力"
+							class="form-control mb-2" />
+						<button type="button" class="btn btn-outline-secondary btn-sm"
+							onclick="clearFileInput(this)">入力をクリア</button>
+					</div>
+				</div>
+
+				<!-- 登録ボタン -->
+				<div class="text-center mt-4">
+					<button type="submit" class="btn btn-primary">登録</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+		<script th:src="@{/js/circular-file.js}"></script>
+	</footer>
+</body>
+</html>

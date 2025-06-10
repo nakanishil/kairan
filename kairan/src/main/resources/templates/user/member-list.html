@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>町内会員一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">会員一覧(<span
+						th:text="${userAssociation}"></span>)
+					</li>
+				</ol>
+			</nav>
+
+
+			<form method="get" th:action="@{/user/member-list}" class="mb-4">
+				<div class="form-row d-flex flex-wrap">
+					<!--氏名 / フリガナ -->
+					<div class="form-group mr-2">
+						<input type="text" name="nameKeyword" class="form-control"
+							th:value="${param.nameKeyword}" placeholder="氏名またはフリガナ" />
+					</div>
+
+					<!-- 役職 -->
+					<div class="form-group mr-2">
+						<select name="roleId" class="form-control">
+							<option value="">すべての役職</option>
+							<th:block th:each="role : ${roles}">
+								<option th:value="${role.id}"
+									th:text="${#strings.replace(role.name, 'ROLE_', '')}"
+									th:selected="${param.roleId} == ${role.id}"></option>
+							</th:block>
+						</select>
+					</div>
+					<!-- 委員カテゴリ -->
+					<div class="form-group mr-2">
+						<select name="committeeId" class="form-control">
+							<option value="">すべての委員</option>
+							<th:block th:each="committee : ${committees}">
+								<option th:value="${committee.id}" th:text="${committee.name}"
+									th:selected="${param.committeeId} == ${committee.id}"></option>
+							</th:block>
+						</select>
+					</div>
+					<!-- 検索ボタン -->
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">検索</button>
+					</div>
+
+					<!-- リセットボタン -->
+					<div class="form-group">
+						<a th:href="@{/user/member-list}" class="btn btn-secondary">リセット</a>
+					</div>
+				</div>
+			</form>
+
+			<a
+				th:href="@{/user/member-list/csv(
+				nameKeyword=${param.nameKeyword},
+				roleId=${param.roleId},
+				committeeId=${param.committeeId})}"
+				class="btn btn-success mb-3">CSV出力</a>
+
+			<form method="post" th:action="@{/user/member-list/update}">
+
+				<input type="hidden" name="nameKeyword"
+					th:value="${param.nameKeyword}" /> <input type="hidden"
+					name="roleId" th:value="${param.roleId}" /> <input type="hidden"
+					name="committeeId" th:value="${param.committeeId}" /> <input
+					type="hidden" name="sort" th:value="${param.sort}" /><input
+					type="hidden" th:name="${_csrf.parameterName}"
+					th:value="${_csrf.token}" />
+
+
+
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th class="text-center"><a
+								th:href="@{/user/member-list(sort='name,' + ${#strings.equals(param.sort, 'name,asc') ? 'desc' : 'asc'})}"
+								class="text-decoration-none text-dark"> 氏名 </a></th>
+							<th class="text-center"><a
+								th:href="@{/user/member-list(sort='furigana,' + ${#strings.equals(param.sort, 'furigana,asc') ? 'desc' : 'asc'})}"
+								class="text-decoration-none text-dark"> フリガナ </a></th>
+							<th class="text-center"><a
+								th:href="@{/user/member-list(sort='role.name,' + ${#strings.equals(param.sort, 'role.name,asc') ? 'desc' : 'asc'})}"
+								class="text-decoration-none text-dark"> 役職 </a></th>
+							<th class="text-center">委員</th>
+							<!-- 委員はソート対象にしないならそのままでOK -->
+							<th class="text-center"><a
+								th:href="@{/user/member-list(sort='district.name,' + ${#strings.equals(param.sort, 'district.name,asc') ? 'desc' : 'asc'})}"
+								class="text-decoration-none text-dark"> 所属町名 </a></th>
+						</tr>
+					</thead>
+
+
+					<tbody>
+						<tr th:if="${userPage.content.isEmpty()}">
+							<td colspan="5" class="text-center">該当する会員は見つかりませんでした。</td>
+						</tr>
+						<tr th:each="user, userStat : ${userPage.content}">
+							<td class="ps-2"><span th:text="${user.name}">氏名 </span> <input
+								type="hidden" th:name="|users[${userStat.index}].userId|"
+								th:value="${user.id}" /></td>
+							<td class="ps-2" th:text="${user.furigana}">フリガナ</td>
+							<td class="ps-2"><select
+								class="form-control form-control-sm"
+								th:name="|users[${userStat.index}].roleId|">
+									<option th:each="role : ${roles}" th:value="${role.id}"
+										th:text="${#strings.replace(role.name, 'ROLE_', '')}"
+										th:selected="${role.id} == ${user.role.id}"></option>
+							</select></td>
+
+							<td class="ps-2"><select
+								class="form-control form-control-sm"
+								th:name="|users[${userStat.index}].committeeId|">
+									<option value="">ーー</option>
+									<option th:each="committee : ${committees}"
+										th:value="${committee.id}" th:text="${committee.name}"
+										th:selected="${user.committee != null}
+										 ? (${committee.id} == ${user.committee.id}) : false">
+									</option>
+							</select></td>
+							<td th:text="${user.district.name}">所属町名</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="mt-3 text-end">
+					<button type="submit" class="btn btn-primary">役職・委員を更新</button>
+				</div>
+			</form>
+
+			<!-- ページネーション -->
+			<nav th:if="${userPage.totalPages > 1}">
+				<ul class="pagination justify-content-center">
+					<!-- 前のページ -->
+					<li th:classappend="${userPage.first} ? 'disabled'"
+						class="page-item"><a
+						th:href="@{/user/member-list(page=${userPage.number - 1})}"
+						class="page-link">前</a></li>
+
+					<!-- ページ番号 -->
+					<li class="page-item"
+						th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+						th:classappend="${userPage.number == i} ? 'active'"><a
+						class="page-link" th:href="@{/user/member-list(page=${i})}"
+						th:text="${i + 1}">1</a></li>
+
+					<!-- 次のページ -->
+					<li th:classappend="${userPage.last} ? 'disabled'"
+						class="page-item"><a
+						th:href="@{/user/member-list(page=${userPage.number + 1})}"
+						class="page-link">次</a></li>
+				</ul>
+			</nav>
+
+
+
+		</div>
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>回覧板詳細 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<div th:replace="~{fragment :: sign-in-name}"></div>
+
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item"><a
+						th:href="@{/circular}">回覧板一覧</a></li>
+					<li class="breadcrumb-item active" aria-current="page">回覧板詳細</li>
+				</ol>
+			</nav>
+			
+
+
+			<!-- メッセージ表示 -->
+			<p th:if="${errorMessage != null}" class="text-center text-danger"
+				th:text="${errorMessage}"></p>
+
+			<!-- 回覧板情報の表示 nullの場合非表示-->
+			<div th:if="${circular != null}">
+				<div class="d-flex align-items-center">
+					<h2 th:text="${circular.name}"></h2>
+					<span th:if="${circular.isUrgent}" class="badge bg-danger ms-2">緊急</span>
+					<span th:if="${readStatus != null}" class="badge bg-secondary ms-2">既読</span>
+				</div>
+				
+				<p class="ps-3">
+					<strong>作成者：</strong><span th:text="${circular.author.name}"></span>
+				</p>
+				<p class="ps-3">
+					<strong>作成日：</strong> <span
+						th:text="${#dates.format(circular.createdAt, 'yyyy/MM/dd')}"></span>
+				</p>
+				<p  class="ps-3"><strong>内容　：</strong><span th:text="${circular.description}"></span>
+				</p>
+				
+			</div>
+
+			<!-- ファイル一覧を表示 -->
+			<h3>添付ファイル</h3>
+			<table class="table table-striped table-bordered w-75 mx-auto">
+				<thead>
+					<tr>
+						<th class="text-center">ファイル名</th>
+						<th class="text-center">ダウンロード</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="file : ${circularFiles}">
+						<td class="ps-4" th:text="${file.fileName}"></td>
+						<td class="text-center"><a th:href="@{/files/download/{id}(id=${file.id})}"
+							class="btn btn-primary btn-sm"> ダウンロード </a></td>
+					</tr>
+					<!-- ファイルがない場合のメッセージ -->
+					<tr th:if="${circularFiles == null or circularFiles.isEmpty()}">
+						<td colspan="2" class="text-center text-muted">添付ファイルはありません</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+		</div>
+	</div>
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+
+	</footer>
+</body>
+</html>

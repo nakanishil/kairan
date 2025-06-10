@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<!-- メタ情報とスタイルシートを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>会費未納者一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<div class="container kairan-container mt-2">
+			<!-- パンくずリスト（任意） -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">未納者一覧</li>
+				</ol>
+			</nav>
+
+			<!-- 以下、既存の「h1」から「table」までをこの中に移動 -->
+			<h3 th:text="'未納者一覧（' + ${year} + '年）'">未納者一覧</h3>
+
+
+			<div th:if="${errorMessage}" class="alert alert-danger"
+				th:text="${errorMessage}"></div>
+
+			<form method="get" th:action="@{/nonpayment/nonpayment-list}"
+				class="mb-4">
+				<div class="row gx-3 gy-2 align-items-center">
+					<div class="col-auto">
+						<label for="year" class="form-label mb-0">年を選択：</label>
+					</div>
+					<div class="col-auto">
+						<select id="year" name="year" class="form-select">
+							<option value="">-- 年を選択 --</option>
+							<option th:each="y : ${yearList}" th:value="${y}"
+								th:text="${y} + ' 年'" th:selected="${y == year}"></option>
+						</select>
+					</div>
+					<div class="col-auto">
+						<button type="submit" class="btn btn-primary">検索</button>
+					</div>
+				</div>
+			</form>
+
+
+
+			<table class="table table-bordered table-striped w-75 mx-auto">
+				<thead>
+					<tr>
+						<th class="text-center">会員名</th>
+						<th class="text-center">フリガナ</th>
+						<th class="text-center">住所</th>
+						<th class="text-center" style="width: 120px;">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${page.content}">
+						<td class="ps-3" th:text="${user.name}">会員名</td>
+						<td class="ps-3" th:text="${user.furigana}">フリガナ</td>
+						<td class="ps-3" th:text="${user.district.name}">住所</td>
+
+						<td class="text-center"><a
+							th:href="@{/nonpayment/depositprocessing-page/{id}(id=${user.id})}"
+							class="btn btn-sm btn-outline-primary">支払処理</a></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- ページネーション -->
+			<nav th:if="${page.totalPages > 1}" class="mt-4">
+				<ul class="pagination justify-content-center">
+					<!-- 前のページ -->
+					<li th:classappend="${page.first} ? 'disabled'" class="page-item">
+						<a class="page-link"
+						th:href="@{/nonpayment/nonpayment-list(
+           page=${page.number - 1},
+           year=${year != null ? year : ''}
+         )}">前</a>
+					</li>
+
+					<!-- ページ番号 -->
+					<li class="page-item"
+						th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+						th:classappend="${i == page.number} ? 'active'"><a
+						class="page-link"
+						th:href="@{/nonpayment/nonpayment-list(
+           page=${i},
+           year=${year != null ? year : ''}
+         )}"
+						th:text="${i + 1}">1</a></li>
+
+					<!-- 次のページ -->
+					<li th:classappend="${page.last} ? 'disabled'" class="page-item">
+						<a class="page-link"
+						th:href="@{/nonpayment/nonpayment-list(
+           page=${page.number + 1},
+           year=${year != null ? year : ''}
+         )}">次</a>
+					</li>
+				</ul>
+			</nav>
+
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+</body>
+
+</html>

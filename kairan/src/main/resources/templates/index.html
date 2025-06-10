@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>ホーム - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item active">トップページ</li>
+				</ol>
+			</nav>
+			<div th:replace="~{fragment :: sign-in-role}"></div>
+
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+
+
+			<!-- ナビ -->
+			<!-- 行政 -->
+			<div th:if="${#authorization.expression('hasRole(''ROLE_行政'')')}"
+				class="mt-5">
+
+				<!-- 管理 -->
+				<div>
+					<h4 class="mb-3">管理</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a th:href="@{/admin/district/association-list}">🏘️
+								町内会情報</a>
+							<div class="text-muted small ms-2">町内会の一覧、追加ができます</div></li>
+					</ul>
+				</div>
+
+				<!-- 掲示板 -->
+				<div>
+					<h4 class="mb-3">掲示板</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a
+							th:href="@{/message/threads/1}">🧑‍⚖️ 会長掲示板</a>
+							<div class="text-muted small ms-2">会長との連絡ができます</div></li>
+					</ul>
+				</div>
+
+			</div>
+
+
+			<!-- 町内会長 -->
+			<div th:if="${#authorization.expression('hasRole(''ROLE_町内会長'')')}"
+				class="mt-5">
+
+				<div class="row">
+					<!-- 左カラム：管理、掲示板 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">管理</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{circular/control-page}">📄 回覧板管理</a>
+								<div class="text-muted small ms-2">回覧板管理を行うページです</div></li>
+							<li class="list-group-item"><a th:href="@{/accounting}">💰
+									町内会計管理</a>
+								<div class="text-muted small ms-2">会計の管理を行うページです</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/membership-fee/register-page}">💳 町内会費設定</a>
+								<div class="text-muted small ms-2">町内会費の設定を行うページです</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/nonpayment/nonpayment-list}">🤑 会費未納者一覧</a>
+								<div class="text-muted small ms-2">町内会費未納者一覧です 現金決済の場合はこちらから入金済みにできます</div></li>
+						</ul>
+					</div>
+					<div class="col-md-6">
+						<h4 class="mb-3">掲示板</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/1}">🧑‍⚖️ 行政掲示板</a>
+								<div class="text-muted small ms-2">行政との連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/2}">📣 委員長掲示板</a>
+								<div class="text-muted small ms-2">委員長への連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/4}">🏫 区長掲示板</a>
+								<div class="text-muted small ms-2">区長への連絡ができます</div></li>
+						</ul>
+					</div>
+				</div>
+				<!-- 右カラム：会員管理、共通 -->
+				<div class="row">
+					<div class="col-md-6">
+						<h4 class="mb-3">会員管理</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/user/member-list}">👥 町内会員一覧</a>
+								<div class="text-muted small ms-2">町内会員の一覧、役職の変更ができます</div></li>
+							<li class="list-group-item"><a th:href="@{/committee/list}">🗂️
+									委員一覧</a>
+								<div class="text-muted small ms-2">委員の一覧、登録、編集、削除ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/district/area-list}">🏘️ 区一覧</a>
+								<div class="text-muted small ms-2">区の一覧、登録、編集、削除ができます</div></li>
+						</ul>
+					</div>
+
+					<div class="col-md-6">
+						<h4 class="mb-3">共通</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a th:href="@{/circular}">📂
+									回覧板</a>
+								<div class="text-muted small ms-2">回覧板を閲覧できます</div></li>
+							<li class="list-group-item"><a th:href="@{/payment/start}">💵
+									町内会費支払い</a>
+								<div class="text-muted small ms-2">町内会費の決済ができます</div></li>
+							<li class="list-group-item"><a th:href="@{/user/mypage}">👤
+									マイページ</a>
+								<div class="text-muted small ms-2">マイページの閲覧、編集ができます</div></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- 委員長 -->
+			<div th:if="${#authorization.expression('hasRole(''ROLE_委員長'')')}"
+				class="mt-5">
+
+				<!-- 管理・掲示板 横並び -->
+				<div class="row">
+					<!-- 管理 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">管理</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/user/committee-members}">👥 委員所属一覧</a>
+								<div class="text-muted small ms-2">所属する同区、同委員の閲覧ができます</div></li>
+						</ul>
+					</div>
+
+					<!-- 掲示板 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">掲示板</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/2}">👑 会長掲示板</a>
+								<div class="text-muted small ms-2">会長との連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/3}">📣 委員掲示板</a>
+								<div class="text-muted small ms-2">委員長が属する委員との連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/5}">🏫 区長掲示板</a>
+								<div class="text-muted small ms-2">所属する区の区長と連絡ができます</div></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- 共通（段を変えて表示） -->
+				<div class="">
+					<h4 class="mb-3">共通</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a th:href="@{/circular}">📂
+								回覧板</a>
+							<div class="text-muted small ms-2">回覧板を閲覧できます</div></li>
+						<li class="list-group-item"><a th:href="@{/payment/start}">💵
+								町内会費支払い</a>
+							<div class="text-muted small ms-2">町内会費の決済ができます</div></li>
+						<li class="list-group-item"><a th:href="@{/user/mypage}">👤
+								マイページ</a>
+							<div class="text-muted small ms-2">マイページの閲覧、編集ができます</div></li>
+					</ul>
+				</div>
+			</div>
+			<!-- 委員 -->
+
+			<div th:if="${#authorization.expression('hasRole(''ROLE_委員'')')}"
+				class="mt-5">
+
+				<!-- 管理・掲示板 横並び -->
+				<div class="row">
+					<!-- 管理 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">管理</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/user/committee-members}">👥 同区・同委員の閲覧</a>
+								<div class="text-muted small ms-2">所属する同区・同委員の情報を確認できます</div></li>
+						</ul>
+					</div>
+
+					<!-- 掲示板 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">掲示板</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/3}">📣 委員長掲示板</a>
+								<div class="text-muted small ms-2">委員長との連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/5}">🏫 区長掲示板</a>
+								<div class="text-muted small ms-2">区長との連絡ができます</div></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- 共通（段を分けて表示） -->
+				<div class="">
+					<h4 class="mb-3">共通</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a th:href="@{/circular}">📂
+								回覧板</a>
+							<div class="text-muted small ms-2">回覧板を閲覧できます</div></li>
+						<li class="list-group-item"><a th:href="@{/payment/start}">💵
+								町内会費支払い</a>
+							<div class="text-muted small ms-2">町内会費の決済ができます</div></li>
+						<li class="list-group-item"><a th:href="@{/user/mypage}">👤
+								マイページ</a>
+							<div class="text-muted small ms-2">マイページの閲覧、編集ができます</div></li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- 区長 -->
+			<div th:if="${#authorization.expression('hasRole(''ROLE_区長'')')}"
+				class="mt-5">
+
+				<!-- 管理・掲示板 横並び -->
+				<div class="row">
+					<!-- 管理 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">管理</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/user/area-members}">👥 区員情報</a>
+								<div class="text-muted small ms-2">同区員の情報が閲覧できます</div></li>
+							<li class="list-group-item"><a th:href="@{/auth/register}">📝
+									新規会員登録</a>
+								<div class="text-muted small ms-2">同区の会員を登録できます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/nonpayment/nonpayment-list}">🤑 会費未納者一覧</a>
+								<div class="text-muted small ms-2">町内会費未納者一覧です 現金決済の場合はこちらから入金済みにできます</div></li>
+						</ul>
+					</div>
+
+					<!-- 掲示板 -->
+					<div class="col-md-6">
+						<h4 class="mb-3">掲示板</h4>
+						<ul class="list-group mb-4">
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/4}">👑 会長掲示板</a>
+								<div class="text-muted small ms-2">会長との連絡ができます</div></li>
+							<li class="list-group-item"><a
+								th:href="@{/message/threads/5}">🗣 会員掲示板</a>
+								<div class="text-muted small ms-2">会員との連絡ができます</div></li>
+						</ul>
+
+					</div>
+				</div>
+
+				<!-- 共通（段を分けて表示） -->
+				<div class="">
+					<h4 class="mb-3">共通</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a th:href="@{/circular}">📂
+								回覧板</a>
+							<div class="text-muted small ms-2">回覧板を閲覧できます</div></li>
+						<li class="list-group-item"><a th:href="@{/payment/start}">💵
+								町内会費支払い</a>
+							<div class="text-muted small ms-2">町内会費の決済ができます</div></li>
+						<li class="list-group-item"><a th:href="@{/user/mypage}">👤
+								マイページ</a>
+							<div class="text-muted small ms-2">マイページの閲覧、編集ができます</div></li>
+					</ul>
+				</div>
+			</div>
+			<!-- 会員 -->
+			<div th:if="${#authorization.expression('hasRole(''ROLE_会員'')')}"
+				class="mt-5">
+
+				<!-- 掲示板 -->
+				<div>
+					<h4 class="mb-3">掲示板</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a
+							th:href="@{/message/threads/5}">🏫 区長掲示板</a>
+							<div class="text-muted small">区長との連絡ができます</div></li>
+					</ul>
+				</div>
+
+				<!-- 共通 -->
+				<div class="">
+					<h4 class="mb-3">共通</h4>
+					<ul class="list-group mb-4">
+						<li class="list-group-item"><a th:href="@{/circular}">📂
+								回覧板</a>
+							<div class="text-muted small ms-2">回覧板を閲覧できます</div></li>
+						<li class="list-group-item"><a th:href="@{/payment/start}">💵
+								町内会費支払い</a>
+							<div class="text-muted small ms-2">町内会費の決済ができます</div></li>
+						<li class="list-group-item"><a th:href="@{/user/mypage}">👤
+								マイページ</a>
+							<div class="text-muted small ms-2">マイページの閲覧、編集ができます</div></li>
+					</ul>
+				</div>
+			</div>
+
+
+			<!-- ナビここまで -->
+
+
+			<!-- ROLE_行政以外にだけ表示 -->
+			<div th:if="${#authorization.expression('!hasRole(''ROLE_行政'')')}">
+
+				<h4 class="mt-5">最新の回覧板(３件)</h4>
+
+				<p th:if="${message != null}" class="text-center text-muted"
+				   th:text="${message}"></p>
+
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th class="text-center">タイトル</th>
+							<th class="text-center">作成日</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="circular : ${circularTopThree}">
+							<td class="ps-3">
+								<a th:href="@{/circular/detail/{id}(id=${circular.id})}"
+								   th:text="${circular.name}"></a>
+								<span th:if="${circular.isUrgent}" class="badge bg-danger ms-2">緊急</span>
+								<span th:if="${readMap[circular.id] == false}" class="badge bg-secondary ms-2">既読</span>
+							</td>
+							<td class="ps-3 text-center"
+								th:text="${#dates.format(circular.createdAt, 'yyyy/MM/dd')}"></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			
+			<!-- カルーセル -->
+			<h4 class="mt-5">町内会 協賛企業様</h4>
+			<div id="kairanCarousel" class="carousel slide mb-4 shadow"
+				data-bs-ride="carousel">
+				<div class="carousel-inner rounded">
+
+					<!-- スライド1：回覧板 -->
+					<div class="carousel-item active position-relative">
+						<a th:href="@{/circular}" sec:authorize="!hasRole('行政')"> <img
+							src="https://picsum.photos/1200/400?random=1"
+							class="d-block w-100" alt="回覧板一覧">
+							<div
+								class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+								<h5>協賛：〇〇株式会社</h5>
+								<p>地域の土木を担当しています</p>
+							</div>
+						</a> <img sec:authorize="hasRole('行政')"
+							src="https://picsum.photos/1200/400?random=1"
+							class="d-block w-100" alt="回覧板一覧">
+					</div>
+
+					<!-- スライド2：マイページ -->
+					<div class="carousel-item position-relative">
+						<a th:href="@{/user/mypage}" sec:authorize="!hasRole('行政')"> <img
+							src="https://picsum.photos/1200/400?random=2"
+							class="d-block w-100" alt="マイページ">
+							<div
+								class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+								<h5>協賛：安田有限会社</h5>
+								<p>金属加工のことならお任せください</p>
+							</div>
+						</a> <img sec:authorize="hasRole('行政')"
+							src="https://picsum.photos/1200/400?random=2"
+							class="d-block w-100" alt="マイページ">
+					</div>
+
+					<!-- スライド3：町内会費支払い -->
+					<div class="carousel-item position-relative">
+						<a th:href="@{/membership-fee/pay}" sec:authorize="!hasRole('行政')">
+							<img src="https://picsum.photos/1200/400?random=3"
+							class="d-block w-100" alt="町内会費支払い">
+							<div
+								class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+								<h5>阿曽歯科</h5>
+								<p>地域の歯医者さん</p>
+							</div>
+						</a> <img sec:authorize="hasRole('行政')"
+							src="https://picsum.photos/1200/400?random=3"
+							class="d-block w-100" alt="町内会費支払い">
+					</div>
+
+				</div>
+
+				<!-- ナビボタン -->
+				<button class="carousel-control-prev" type="button"
+					data-bs-target="#kairanCarousel" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">前へ</span>
+				</button>
+				<button class="carousel-control-next" type="button"
+					data-bs-target="#kairanCarousel" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">次へ</span>
+				</button>
+			</div>
+
+			<!-- カルーセルここまで -->
+		</div>
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>

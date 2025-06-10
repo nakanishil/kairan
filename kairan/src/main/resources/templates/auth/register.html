@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>会員登録 - KAIRAN</title>
+</head>
+<body>
+    <div class="kairan-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+        <div class="container kairan-container mt-2">
+
+            <!-- パンくずリスト -->
+            <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">会員登録</li>
+                </ol>
+            </nav>
+
+            <p class="text-danger" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+            <form th:action="@{/register}" th:object="${userRegiForm}" method="post" class="register-form">
+                <!-- IDとパスワードが同じ場合のエラーメッセージ -->
+                <p class="text-danger" th:if="${#fields.hasErrors('passwordDifferentFromUserId')}" th:errors="*{passwordDifferentFromUserId}"></p>
+
+                <div class="form-group">
+                    <label for="email">メールアドレス:</label>
+                    <input type="email" id="email" th:field="*{email}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="userId">希望するID:</label>
+                    <input type="text" id="userId" th:field="*{userId}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">パスワード:</label>
+                    <input type="password" id="password" th:field="*{password}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">確認用パスワード:</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">氏名:</label>
+                    <input type="text" id="name" th:field="*{name}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="furigana">フリガナ:</label>
+                    <input type="text" id="furigana" th:field="*{furigana}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('furigana')}" th:errors="*{furigana}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">電話番号:</label>
+                    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="postalCode">郵便番号:</label>
+                    <input type="text" id="postalCode" th:field="*{postalCode}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('postalCode')}" th:errors="*{postalCode}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">住所:</label>
+                    <input type="text" id="address" th:field="*{address}" required class="form-control">
+                    <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">登録</button>
+            </form>
+
+        </div>
+
+        <!-- フッター -->
+        <footer>
+            <div th:replace="~{fragment :: footer}"></div>
+            <div th:replace="~{fragment :: scripts}"></div>
+        </footer>
+    </div>
+</body>
+</html>

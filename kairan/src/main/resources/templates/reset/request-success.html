@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<!-- メタ情報とスタイルを読み込み -->
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>申請完了 - KAIRAN</title>
+</head>
+
+<body>
+<div class="kairan-wrapper">
+	<div th:replace="~{fragment :: header}"></div>
+
+	<div class="container kairan-container mt-2">
+		
+		<!-- パンくずリスト -->
+		<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+			<ol class="breadcrumb mb-0">
+				<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+				<li class="breadcrumb-item active" aria-current="page">パスワードリセット申請完了</li>
+			</ol>
+		</nav>
+
+		<!-- 完了メッセージカード -->
+		<div class="card shadow-sm mx-auto" style="max-width: 500px;">
+			<div class="card-body text-center">
+				<h4 class="card-title mb-4">パスワードリセット申請完了</h4>
+
+				<div class="alert alert-success">
+					<p>登録されたメールアドレス宛に、パスワードリセット用リンクを送信しました。</p>
+					<p>メールをご確認ください。</p>
+				</div>
+
+				<div class="d-grid gap-2 col-8 mx-auto mt-3">
+					<a th:href="@{/login}" class="btn btn-primary">ログイン画面へ戻る</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- フッター -->
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title>回覧板管理ページ</title>
+<meta charset="UTF-8">
+<!-- 共通メタ & CSS -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+
+		<div class="container kairan-container mt-4">
+
+			<!-- ログイン名表示 -->
+			<div th:replace="~{fragment :: sign-in-name}"></div>
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">回覧板管理</li>
+				</ol>
+			</nav>
+
+			<!-- 成功メッセージ -->
+			<div th:if="${successMessage}"
+				class="alert alert-success text-center">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+			<!-- エラーメッセージ -->
+			<div th:if="${errorMessage}" class="alert alert-danger text-center">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<h2 class="mb-4">回覧板一覧（[[${association}]]）</h2>
+
+			<!-- 新規作成ボタン -->
+			<div class="text-start mt-4 mb-4">
+				<a class="btn btn-primary"
+					th:href="@{/circular/control/register-page}">＋ 回覧板を追加</a>
+			</div>
+
+
+
+			<!-- 回覧板テーブル -->
+			<table class="table table-striped table-bordered align-middle">
+				<thead class="table-light text-center">
+					<tr>
+						<th>作成日</th>
+						<th>タイトル</th>
+						<th>説明</th>
+						<th>緊急</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${circularPage.content.isEmpty()}">
+						<td colspan="5" class="text-center text-muted">
+							現在、回覧板は登録されていません。</td>
+					</tr>
+					<tr th:each="circular : ${circularPage.content}">
+						<td class="text-center"
+							th:text="${#dates.format(circular.createdAt, 'yyyy/MM/dd')}"></td>
+						<td th:text="${circular.name}"></td>
+						<td th:text="${circular.description}"></td>
+						<td class="text-center"><span th:if="${circular.isUrgent}"
+							class="badge bg-danger">緊急</span> <span
+							th:unless="${circular.isUrgent}" class="text-muted">-</span></td>
+						<td class="text-center"><a
+							th:href="@{/circular/control/edit-page/{id}(id=${circular.id})}"
+							class="btn btn-sm btn-outline-primary me-1">編集</a>
+							<form
+								th:action="@{/circular/control/delete/{id}(id=${circular.id})}"
+								method="post" th:object="${circular}" style="display: inline;">
+								<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+								<button type="submit" class="btn btn-sm btn-outline-danger"
+									onclick="return confirm('本当に削除しますか？')">削除</button>
+							</form></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- ページネーション -->
+			<nav th:if="${circularPage.totalPages > 1}" class="mt-4">
+			  <ul class="pagination justify-content-center">
+
+			    <!-- 前 -->
+			    <li th:classappend="${circularPage.first} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/circular/control-page(page=${circularPage.number - 1})}">前</a>
+			    </li>
+
+			    <!-- ページ番号 -->
+			    <li class="page-item"
+			        th:each="i : ${#numbers.sequence(0, circularPage.totalPages - 1)}"
+			        th:classappend="${i == circularPage.number} ? 'active'">
+			      <a class="page-link"
+			         th:href="@{/circular/control-page(page=${i})}"
+			         th:text="${i + 1}">1</a>
+			    </li>
+
+			    <!-- 次 -->
+			    <li th:classappend="${circularPage.last} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/circular/control-page(page=${circularPage.number + 1})}">次</a>
+			    </li>
+
+			  </ul>
+			</nav>
+
+
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+
+
+</body>
+</html>

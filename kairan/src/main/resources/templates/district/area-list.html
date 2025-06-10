@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>町内会 区一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">区一覧(<span
+						th:text="${association}"></span>)
+					</li>
+				</ol>
+			</nav>
+
+			<!-- メッセージ -->
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<a class="btn btn-primary mb-3" th:href="@{/district/register-page}">＋ 区の登録</a>
+
+
+			<h4 class="mt-5 mb-3 text-decoration-underline">区一覧</h4>
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">町名</th>
+						<th class="text-center" style="width: 150px;">区</th>
+						<th class="text-center">説明</th>
+						<th class="text-center" style="width: 120px;">操作</th>
+					</tr>
+				</thead>
+
+
+				<tbody>
+					<tr th:if="${districtList.isEmpty()}">
+						<td colspan="2" class="text-center">該当する委員は見つかりませんでした。</td>
+					</tr>
+					<tr th:each="district : ${districtList}">
+						<td class="ps-2" th:text="${district.name}">町名</td>
+						<td class="ps-2" th:text="${district.area}">区</td>
+						<td class="ps-2" th:text="${district.description}">説明</td>
+						<td class="text-center"><a class="btn btn-sm btn-outline-primary"
+							th:href="@{/district/edit-page/{id}(id=${district.id})}">編集</a>
+							<form th:action="@{/accounting/edit/{id}(id=${district.id})}"
+								method="post" onsubmit="return confirm('本当に削除しますか？');"
+								style="display: inline;">
+								<input type="hidden" th:name="${_csrf.parameterName}"
+									th:value="${_csrf.token}" />
+								<button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
+							</form></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>
+

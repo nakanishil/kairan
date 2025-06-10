@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>町内会詳細 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<div class="container kairan-container mt-4">
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item"><a
+						th:href="@{/admin/district/association-list}">町内会一覧</a></li>
+					<li class="breadcrumb-item active" aria-current="page">町内会詳細</li>
+				</ol>
+			</nav>
+
+			<!-- 町内会名の見出し -->
+			<h3 th:text="${districtList[0].association} + '（町内会）'" class="mb-4">〇〇町内会</h3>
+
+			<!-- 現町内会長 -->
+			<h5 class="mb-2">現町内会長</h5>
+			<table class="table table-bordered table-striped mb-4 w-50">
+				<thead class="table-light">
+					<tr>
+						<th class="text-center">氏名</th>
+						<th class="text-center">電話番号</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="mayor : ${mayorsList}">
+						<td class="ps-3" th:text="${mayor.name}"></td>
+						<td class="ps-3" th:text="${mayor.phoneNumber}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<!-- 構成 -->
+			<h5 class="mb-2">構成</h5>
+			<table class="table table-bordered table-striped">
+				<thead class="table-light">
+					<tr>
+						<th class="text-center">町名</th>
+						<th class="text-center">区</th>
+						<th class="text-center">説明</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="district : ${districtList}">
+						<td class="ps-3" th:text="${district.name}"></td>
+						<td class="ps-3" th:text="${district.area}"></td>
+						<td class="ps-3" th:text="${district.description}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- 戻るボタン -->
+			<div class="text-center">
+				<a class="btn btn-secondary mt-3"
+					th:href="@{/admin/district/association-list}">一覧に戻る</a>
+			</div>
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+</body>
+</html>

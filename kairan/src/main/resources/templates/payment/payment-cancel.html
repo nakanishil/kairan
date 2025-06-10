@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>決済キャンセル - KAIRAN</title>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+<div class="kairan-wrapper">
+
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-5 d-flex justify-content-center">
+        <div class="card text-center shadow w-50">
+            <div class="card-header fs-5 fw-bold">
+                決済がキャンセルされました
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">支払いは完了していません。</h5>
+                <a th:href="@{/payment/start}" class="btn btn-primary mt-3">もう一度支払いに進む</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div th:replace="~{fragment :: footer}"></div>
+        <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+</div>
+</body>
+</html>

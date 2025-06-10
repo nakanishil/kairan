@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>新規町内会 登録完了</title>
+</head>
+<body>
+<div class="kairan-wrapper">
+
+    <!-- ヘッダー -->
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-4">
+        <!-- パンくずリスト -->
+        <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/district/association-list}">町内会一覧</a></li>
+                <li class="breadcrumb-item active" aria-current="page">登録完了</li>
+            </ol>
+        </nav>
+
+        <h3 class="mb-4">町内会の登録が完了しました</h3>
+
+        <!-- 登録された町内会情報 -->
+        <div class="card mb-4">
+            <div class="card-header">登録された町内会情報</div>
+            <div class="card-body">
+                <p><strong>町内会名：</strong><span th:text="${district.association}"></span></p>
+                <p><strong>町名：</strong><span th:text="${district.name}"></span></p>
+                <p><strong>地方公共団体コード：</strong><span th:text="${district.regionCode}"></span></p>
+                <p><strong>区：</strong><span th:text="${district.area}"></span></p>
+                <p><strong>説明文：</strong><span th:text="${district.description}"></span></p>
+            </div>
+        </div>
+
+        <!-- 仮ユーザー情報 -->
+        <div class="card mb-4">
+            <div class="card-header">仮ユーザーアカウント（自動発行）</div>
+            <div class="card-body">
+                <p><strong>仮町内会長：</strong><br>
+                    ユーザーID：<span th:text="${kaicho.userId}"></span><br>
+                    メールアドレス：<span th:text="${kaicho.email}"></span><br>
+                    パスワード：<code>12345</code>
+                </p>
+                <hr>
+                <p><strong>仮区長：</strong><br>
+                    ユーザーID：<span th:text="${kucho.userId}"></span><br>
+                    メールアドレス：<span th:text="${kucho.email}"></span><br>
+                    パスワード：<code>12345</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- 注意 -->
+        <div class="alert alert-warning">
+            <strong>⚠ 注意：</strong><br>
+            最低でも仮区長アカウントでログインして、新規会員を <strong>2名(町内会長、区長)</strong> 登録してください。<br>
+            その後、仮町内会長アカウントでログインし、実際に使用されるアカウント２名のうち、<strong>1名を町内会長に、もう1名を区長に任命</strong>してください。<br>
+            最後に、仮会長および仮区長のアカウントを削除してください。
+        </div>
+
+        <!-- 戻るボタン -->
+        <a class="btn btn-secondary mt-3" th:href="@{/admin/district/association-list}">一覧に戻る</a>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+        <div th:replace="~{fragment :: footer}"></div>
+        <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+</div>
+</body>
+</html>

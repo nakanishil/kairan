@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>年会費編集 - KAIRAN</title>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+<div class="kairan-wrapper">
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-2">
+        <!-- パンくずリスト -->
+        <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/membership-fee/register-page}">年会費一覧</a></li>
+                <li class="breadcrumb-item active" aria-current="page">年会費編集</li>
+            </ol>
+        </nav>
+
+        <!-- エラーメッセージ -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- フォームカード -->
+        <div class="container mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <form th:action="@{/membership-fee/edit}" th:object="${form}" method="post">
+
+                        <!-- 全体エラー -->
+                        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                            入力に誤りがあります。修正してください。
+                        </div>
+
+                        <input type="hidden" th:field="*{id}" />
+
+                        <h2 class="text-center pb-3">年会費情報を編集</h2>
+
+                        <!-- 年度 -->
+                        <div class="row mb-2 text-center">
+                            <div class="form-group col-5 fw-bold text-end px-0">
+                                <label for="year">年度：</label>
+                            </div>
+                            <div class="col-4 text-start px-0">
+                                <input type="text" th:field="*{year}" class="form-control" id="year">
+                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+                            </div>
+                        </div>
+
+                        <!-- 金額 -->
+                        <div class="row mb-2 text-center">
+                            <div class="form-group col-5 fw-bold text-end px-0">
+                                <label for="amount">金額：</label>
+                            </div>
+                            <div class="col-4 text-start px-0">
+                                <input type="text" th:field="*{amount}" class="form-control" id="amount">
+                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+                            </div>
+                        </div>
+
+                        <!-- CSRF -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <!-- ボタン -->
+                        <div class="text-center pt-4">
+                            <button type="submit" class="btn btn-primary">更新する</button>
+                            <a th:href="@{/membership-fee/register-page}" class="btn btn-secondary ms-2">一覧に戻る</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+        <div th:replace="~{fragment :: footer}"></div>
+        <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+</div>
+</body>
+</html>

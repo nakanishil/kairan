@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>投稿の編集 - KAIRAN</title>
+</head>
+<body>
+    <div class="kairan-wrapper">
+        <div th:replace="~{fragment :: header}"></div>
+        <div class="container kairan-container mt-2">
+
+            <!-- パンくずリスト -->
+            <nav class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/message/thread/{id}(id=${message.parentId == null ? message.id : message.parentId})}">スレッド詳細</a></li>
+                    <li class="breadcrumb-item active">投稿を編集</li>
+                </ol>
+            </nav>
+            
+            <p class="text-danger" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+			
+			<!-- 編集フォーム -->
+			<form th:action="@{/message/edit/{id}(id=${message.id})}" method="post">
+				<!-- スレッドの編集のときのみタイトル編集を表示 -->
+				<div th:if="${message.parentId == null}" class="mb-3">
+					<label for="title" class="form-label">タイトル</label>
+					<input type="text" id="title" name="title" class="form-control" th:value="${message.title}" required>
+				</div>			
+				
+				<!-- コメントの編集 -->
+				<div class="mb-3">
+					<label for="comment" class="form-label">内容</label>
+					<textarea id="comment" name="comment" class="form-control" rows="4" required th:text="${message.comment}"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary w-100">更新</button>
+			</form>
+        </div>
+        <footer>
+            <div th:replace="~{fragment :: footer}"></div>
+        </footer>
+    </div>
+</body>
+</html>

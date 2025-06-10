@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>支払い処理 - KAIRAN</title>
+  <div th:replace="~{fragment :: meta}"></div>
+  <div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+  <div class="kairan-wrapper">
+    <!-- ヘッダー -->
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-3">
+      <!-- パンくずリスト（任意） -->
+      <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+          <li class="breadcrumb-item"><a th:href="@{/nonpayment/nonpayment-list}">未納者一覧</a></li>
+          <li class="breadcrumb-item active" aria-current="page">支払い処理</li>
+        </ol>
+      </nav>
+
+      <h3 class="mb-4">支払い処理フォーム</h3>
+
+      <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+      <form th:action="@{/nonpayment/depositprocessing/{id}(id=${form.payerId})}" 
+            th:object="${form}" method="post" class="w-75 mx-auto">
+
+        <!-- 年 -->
+        <div class="mb-3">
+          <label class="form-label">支払い対象年</label>
+          <select th:field="*{year}" class="form-select">
+            <option value="">-- 年を選択 --</option>
+            <option th:each="y : ${yearList}"
+                    th:value="${y}" th:text="${y} + ' 年'"></option>
+          </select>
+          <div class="text-danger" th:errors="*{year}"></div>
+        </div>
+
+        <!-- 金額 -->
+        <div class="mb-3">
+          <label class="form-label">金額</label>
+          <input type="number" th:field="*{amount}" class="form-control" placeholder="金額を入力">
+          <div class="text-danger" th:errors="*{amount}"></div>
+        </div>
+
+        <!-- 説明 -->
+        <div class="mb-3">
+          <label class="form-label">説明</label>
+          <input type="text" th:field="*{description}" class="form-control" placeholder="例：町内会費の現金支払いなど">
+          <div class="text-danger" th:errors="*{description}"></div>
+        </div>
+
+        <!-- 取引日 -->
+        <div class="mb-3">
+          <label class="form-label">取引日</label>
+          <input type="datetime-local" th:field="*{transactionDate}" class="form-control">
+          <div class="text-danger" th:errors="*{transactionDate}"></div>
+        </div>
+
+        <!-- 支払方法 -->
+        <div class="mb-3">
+          <label class="form-label">支払方法</label>
+          <select th:field="*{paymentMethodId}" class="form-select">
+            <option value="">-- 選択してください --</option>
+            <option th:each="method : ${methods}" 
+                    th:value="${method.id}" 
+                    th:text="${method.name}"></option>
+          </select>
+          <div class="text-danger" th:errors="*{paymentMethodId}"></div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="mt-4 text-center">
+          <button type="submit" class="btn btn-primary me-2">登録</button>
+          <a th:href="@{/nonpayment/nonpayment-list}" class="btn btn-secondary">戻る</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+      <div th:replace="~{fragment :: footer}"></div>
+      <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+  </div>
+</body>
+</html>

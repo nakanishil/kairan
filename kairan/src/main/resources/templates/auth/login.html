@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>ログイン - KAIRAN</title>
+</head>
+<body class="d-flex flex-column min-vh-100"
+	style="background-color: #d6d8db;">
+	<main
+		class="flex-fill d-flex justify-content-center align-items-center">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-xl-4 col-lg-5 col-md-6 col-sm-8">
+					<div class="card shadow">
+						<div class="card-body">
+							<div class="text-center">
+								<img th:src="@{/images/kairanbanimg.png}" alt="KAIRAN ロゴ"
+									class="rounded-circle mb-3"
+									style="width: 120px; height: 120px; object-fit: cover;">
+							</div>
+							<h2 class="text-center mb-4">KAIRAN ログイン</h2>
+
+							<!-- エラーメッセージ -->
+							<div th:if="${param.error}"
+								class="alert alert-danger text-center">
+								ユーザーIDまたはパスワードが違います。</div>
+
+							<!-- フォーム -->
+							<form th:action="@{/login}" method="post">
+								<div class="mb-3">
+									<label for="userId" class="form-label">ユーザーID</label> <input
+										type="text" id="userId" name="username" class="form-control"
+										required>
+								</div>
+								<div class="mb-3">
+									<label for="password" class="form-label">パスワード</label> <input
+										type="password" id="password" name="password"
+										class="form-control" required>
+								</div>
+								<button type="submit" class="btn btn-primary w-100">ログイン</button>
+							</form>
+							<a href="/oauth2/authorization/google"
+								class="mt-1 btn btn-success w-100"> <i class="bi bi-google"></i>
+								Googleでログイン
+							</a>
+
+							<div class="mt-3 text-center">
+								<a th:href="@{/reset/request}">ID・パスワードを忘れた方はこちら</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- フッター -->
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</footer>
+</body>
+</html>

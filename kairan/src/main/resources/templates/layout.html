@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+      lang="ja">
+<head>
+    <!-- メタ情報とスタイルを読み込み -->
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title th:text="${pageTitle} ?: 'KAIRAN'"></title>
+</head>
+<body layout:fragment="body">
+
+    <!-- ヘッダー -->
+    <div th:replace="~{fragment :: header}"></div>
+    
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- メインコンテンツエリア -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div layout:fragment="content">
+                    <!-- 各ページの内容がここに入る -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <div th:replace="~{fragment :: footer}"></div>
+
+    <!-- スクリプト -->
+    <div th:replace="~{fragment :: scripts}"></div>
+</body>
+</html>

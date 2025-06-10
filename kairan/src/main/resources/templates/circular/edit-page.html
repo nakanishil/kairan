@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>回覧板を編集 - KAIRAN</title>
+  <div th:replace="~{fragment :: meta}"></div>
+  <div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+<div class="kairan-wrapper">
+  <div th:replace="~{fragment :: header}"></div>
+
+  <div class="container kairan-container mt-4">
+    <h2 class="mb-4">回覧板を編集</h2>
+
+    <!-- エラーメッセージ全体 -->
+    <div th:if="${errorMessage}" class="alert alert-danger text-center mb-4">
+      <span th:text="${errorMessage}"></span>
+    </div>
+
+    <form th:action="@{/circular/control/edit/{id}(id=${circularId})}"
+          th:object="${form}"
+          method="post"
+          enctype="multipart/form-data">
+
+      <!-- 回覧板名 -->
+      <div class="mb-3">
+        <label class="form-label">回覧板名</label>
+        <input type="text" th:field="*{name}" class="form-control"
+               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" />
+        <div class="invalid-feedback" th:errors="*{name}"></div>
+      </div>
+
+      <!-- 説明 -->
+      <div class="mb-3">
+        <label class="form-label">説明</label>
+        <textarea th:field="*{description}" class="form-control" rows="4"
+                  th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+        <div class="invalid-feedback" th:errors="*{description}"></div>
+      </div>
+
+      <!-- 緊急フラグ -->
+      <div class="form-check form-switch mb-3">
+        <input type="checkbox" th:field="*{isUrgent}" class="form-check-input" />
+        <label class="form-check-label">緊急ラベルをつける</label>
+      </div>
+
+      <!-- 添付ファイル -->
+      <div id="fileUploadArea">
+        <div class="file-upload-item mb-3 border p-3 rounded">
+          <label class="form-label">ファイル1：</label>
+          <input type="file" name="fileList[0].file" class="form-control mb-2" onchange="addFileInput(this)" />
+          <input type="text" name="fileList[0].fileName" placeholder="会員に表示する名称を入力" class="form-control mb-2" />
+          <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearFileInput(this)">入力をクリア</button>
+        </div>
+      </div>
+
+      <!-- 保存ボタン -->
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">編集内容を保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- スクリプト -->
+<footer>
+  <div th:replace="~{fragment :: footer}"></div>
+  <div th:replace="~{fragment :: scripts}"></div>
+  <script th:src="@{/js/circular-file.js}"></script>
+</footer>
+</body>
+</html>

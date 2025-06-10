@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>会員情報編集 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/user/mypage}">マイページ</a></li>
+					<li class="breadcrumb-item active" aria-current="page">自分の情報を変更
+					</li>
+				</ol>
+			</nav>
+
+			<!-- メッセージ -->
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+			<div class="container mt-4">
+				<div class="card">
+					<div class="card-body">
+						<form th:action="@{/user/edit}" th:object="${form}" method="post"
+							id="form" class="user-edit-form">
+							<!-- IDとパスワードが同じ場合のエラーメッセージ （コード エンティティに記載有） -->
+							<p class="text-danger"
+								th:if="${#fields.hasErrors('passwordDifferentFromUserId')}"
+								th:errors="*{passwordDifferentFromUserId}"></p>
+
+							<h2 class="text-center pb-3">ユーザ情報を編集</h2>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="email">メールアドレス：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="email" id="email" th:field="*{email}" required
+										class="form-control" th:value="${form.email}"> <span
+										class="text-danger" th:if="${#fields.hasErrors('email')}"
+										th:errors="*{email}"></span>
+								</div>
+							</div>
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="userId">ユーザID：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="text" id="userId" th:field="*{userId}" required
+										class="form-control" th:value="${form.userId}"> <span
+										class="text-danger" th:if="${#fields.hasErrors('userId')}"
+										th:errors="*{userId}"></span>
+								</div>
+							</div>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="password">パスワード：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="password" id="password" th:field="*{password}"
+										required class="form-control" th:value="${form.password}">
+									<span class="text-danger"
+										th:if="${#fields.hasErrors('password')}"
+										th:errors="*{password}"></span>
+								</div>
+							</div>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="confirmPassword">確認用パスワード：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="password" id="confirmPassword"
+										th:field="*{confirmPassword}" required class="form-control"
+										th:value="${form.confirmPassword}"> <span
+										class="text-danger"
+										th:if="${#fields.hasErrors('confirmPassword')}"
+										th:errors="*{confirmPassword}"></span>
+								</div>
+							</div>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="name">氏名：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="text" id="name" th:field="*{name}" required
+										class="form-control" th:value="${form.name}"> <span
+										class="text-danger" th:if="${#fields.hasErrors('name')}"
+										th:errors="*{name}"></span>
+								</div>
+							</div>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="furigana">フリガナ：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="text" id="furigana" th:field="*{furigana}"
+										required class="form-control" th:value="${form.furigana}">
+									<span class="text-danger"
+										th:if="${#fields.hasErrors('furigana')}"
+										th:errors="*{furigana}"></span>
+								</div>
+							</div>
+
+							<div class="row mb-2 text-center">
+								<div class="form-group col-5 fw-bold text-end px-0">
+									<label for="phoneNumber">電話番号：</label>
+								</div>
+								<div class="col-4 text-start px-0">
+									<input type="text" id="phoneNumber" th:field="*{phoneNumber}"
+										required class="form-control" th:value="${form.phoneNumber}">
+									<span class="text-danger"
+										th:if="${#fields.hasErrors('phoneNumber')}"
+										th:errors="*{phoneNumber}"></span>
+								</div>
+							</div>
+							<div class="text-center pt-5">
+								<button type="submit" class="btn btn-danger">更新</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!--			 情報更新用モーダル -->
+			<!--			<div class="modal fade" id="updateModal" tabindex="-1"-->
+			<!--				aria-labelledby="updateModalLabel" aria-hidden="true">-->
+			<!--				<div class="modal-dialog">-->
+			<!--					<div class="modal-content">-->
+			<!--						<div class="modal-header">-->
+			<!--							<h5 class="modal-title" id="userUpdateModalLabel">確認</h5>-->
+			<!--							<button type="button" class="btn-close" data-bs-dismiss="modal"-->
+			<!--								aria-label="閉じる"></button>-->
+			<!--						</div>-->
+
+			<!--						<div class="modal-body">-->
+			<!--							<p>-->
+			<!--								メールアドレス：<span id="modalEmail"></span>-->
+			<!--							</p>-->
+			<!--							<p>-->
+			<!--								ユーザID：<span id="modalUserId"></span>-->
+			<!--							</p>-->
+			<!--							<p>-->
+			<!--								氏名：<span id="modalName"></span>-->
+			<!--							</p>-->
+			<!--							<p>-->
+			<!--								フリガナ：<span id="modalFurigana"></span>-->
+			<!--							</p>-->
+			<!--							<p>-->
+			<!--								電話番号：<span id="modalPhoneNumber"></span>-->
+			<!--							</p>-->
+			<!--							<p>確認後更新してください。</p>-->
+			<!--						</div>-->
+
+			<!--						<div class="modal-footer">-->
+
+			<!--							<button type="submit" class="btn btn-danger" form="form">更新</button>-->
+			<!--							<button type="button" class="btn btn-secondary"-->
+			<!--								data-bs-dismiss="modal">キャンセル</button>-->
+
+			<!--						</div>-->
+			<!--					</div>-->
+			<!--				</div>-->
+			<!--			</div>-->
+
+
+
+		</div>
+		<!-- フッター -->
+		<footer>
+
+			<script th:src="@{/js/user-edit.js}"></script>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>

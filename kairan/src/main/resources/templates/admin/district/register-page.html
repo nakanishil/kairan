@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>町内会 新規登録 - KAIRAN</title>
+</head>
+<body>
+<div class="kairan-wrapper">
+    <!-- ヘッダー -->
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-4">
+        <!-- パンくずリスト -->
+        <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item active" aria-current="page">町内会新規登録</li>
+            </ol>
+        </nav>
+
+        <!-- カード -->
+        <div class="card shadow-sm w-75 mx-auto">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">町内会 新規登録</h4>
+            </div>
+
+            <div class="card-body">
+                <!-- エラーメッセージ -->
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- フォーム -->
+                <div class="ps-5">
+                <form th:action="@{/admin/district/register}" th:object="${form}" method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">町名</label>
+                        <input type="text" th:field="*{name}" class="form-control w-50" id="name">
+                        <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="regioncode" class="form-label">地方公共団体コード</label>
+                        <input type="text" th:field="*{regioncode}" class="form-control w-50" id="regioncode">
+                        <div class="text-danger" th:if="${#fields.hasErrors('regioncode')}" th:errors="*{regioncode}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="association" class="form-label">町内会名</label>
+                        <input type="text" th:field="*{association}" class="form-control w-50" id="association">
+                        <div class="text-danger" th:if="${#fields.hasErrors('association')}" th:errors="*{association}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="area" class="form-label">区</label>
+                        <input type="text" th:field="*{area}" class="form-control w-50" id="area">
+                        <div class="text-danger" th:if="${#fields.hasErrors('area')}" th:errors="*{area}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">説明文（任意）</label>
+                        <textarea th:field="*{description}" class="form-control w-75" id="description" rows="3"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                    </div>
+
+                    <!-- ボタン -->
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="submit" class="btn btn-primary">登録</button>
+                        <a th:href="@{/admin/district/association-list}" class="btn btn-secondary">一覧に戻る</a>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+        <div th:replace="~{fragment :: footer}"></div>
+        <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+</div>
+</body>
+</html>

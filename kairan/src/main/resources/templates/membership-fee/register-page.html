@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>年会費登録 - KAIRAN</title>
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">年会費登録</li>
+				</ol>
+			</nav>
+
+			<!-- メッセージ -->
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<!-- 年会費登録フォーム -->
+			<h4 class="mt-5 mb-3 text-decoration-underline">新しい年会費を登録</h4>
+			<form th:action="@{/membership-fee/register}" method="post"
+				th:object="${form}" class="ms-5">
+				<input type="hidden" th:name="${_csrf.parameterName}"
+					th:value="${_csrf.token}" />
+
+				<!-- 年 -->
+				<div class="row align-items-center mb-2">
+					<div class="col-auto">
+						<label for="year" class="form-label fs-5">年　:</label>
+					</div>
+					<div class="col-auto">
+						<input type="number" th:field="*{year}" class="form-control"
+							id="year" th:attr="min=${currentYear}">
+					</div>
+					<div class="col-auto text-danger small"
+						th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+				</div>
+
+				<!-- 金額 ＋ 登録ボタン -->
+				<div class="row align-items-center mb-2">
+					<div class="col-auto">
+						<label for="amount" class="form-label fs-5">金額:</label>
+					</div>
+					<div class="col-auto">
+						<input type="text" th:field="*{amount}" class="form-control"
+							id="amount">
+					</div>
+					<div class="col-auto">
+						<button type="submit" class="btn btn-primary">登録</button>
+					</div>
+					<div class="col-auto text-danger small"
+						th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+				</div>
+			</form>
+
+
+			<!-- 年会費一覧テーブル -->
+			<h4 class="mt-5 mb-3 text-decoration-underline">登録済み年会費一覧</h4>
+			<div class="text-center">
+				<table class="table table-bordered table-striped w-75 mx-auto">
+					<thead>
+						<tr>
+							<th class="text-center">年度</th>
+							<th class="text-center">金額</th>
+							<th class="text-center" style="width: 130px;">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							th:if="${membershipFeePage == null or membershipFeePage.content.size() == 0}">
+							<td colspan="3" class="text-center">登録された年会費はありません。</td>
+						</tr>
+						<tr th:each="membershipFee : ${membershipFeePage.content}">
+							<td class="ps-2" th:text="${membershipFee.year}"></td>
+							<td th:text="${membershipFee.amount.intValue()} + ' 円'"></td>
+
+
+							<td class="text-center"><a
+								th:href="@{'/membership-fee/edit-page/' + ${membershipFee.id}}"
+								class="btn btn-sm btn-outline-primary">編集</a>
+								<form
+									th:action="@{'/membership-fee/delete/' + ${membershipFee.id}}"
+									method="post" style="display: inline;">
+									<input type="hidden" th:name="${_csrf.parameterName}"
+										th:value="${_csrf.token}" />
+									<button type="submit" class="btn btn-sm btn-outline-danger"
+										onclick="return confirm('削除してもよろしいですか？')">削除</button>
+								</form></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- ページネーション -->
+				<nav
+					th:if="${membershipFeePage != null and membershipFeePage.totalPages > 1}">
+					<ul class="pagination justify-content-center">
+						<li th:classappend="${membershipFeePage.first} ? 'disabled'">
+							<a th:href="@{/membership-fee/register-page(page=0)}"
+							class="page-link">最初</a>
+						</li>
+						<li
+							th:classappend="${!membershipFeePage.hasPrevious()} ? 'disabled'">
+							<a
+							th:href="@{/membership-fee/register-page(page=${membershipFeePage.number - 1})}"
+							class="page-link">前へ</a>
+						</li>
+						<li
+							th:each="pageNum : ${#numbers.sequence(0, membershipFeePage.totalPages - 1)}"
+							th:classappend="${pageNum == membershipFeePage.number} ? 'active'">
+							<a th:href="@{/membership-fee/register-page(page=${pageNum})}"
+							class="page-link" th:text="${pageNum + 1}"></a>
+						</li>
+						<li th:classappend="${!membershipFeePage.hasNext()} ? 'disabled'">
+							<a
+							th:href="@{/membership-fee/register-page(page=${membershipFeePage.number + 1})}"
+							class="page-link">次へ</a>
+						</li>
+						<li th:classappend="${membershipFeePage.last} ? 'disabled'"><a
+							th:href="@{/membership-fee/register-page(page=${membershipFeePage.totalPages - 1})}"
+							class="page-link">最後</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+</body>
+</html>

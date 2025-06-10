@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>エラー - KAIRAN</title>
+</head>
+<body>
+
+<div class="kairan-wrapper">
+	<div th:replace="~{fragment :: header}"></div>
+
+	<div class="container kairan-container mt-4">
+
+		<!-- パンくずリスト -->
+		<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+			<ol class="breadcrumb mb-0">
+				<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+				<li class="breadcrumb-item active" aria-current="page">エラー</li>
+			</ol>
+		</nav>
+
+		<!-- エラーメッセージ -->
+		<div class="alert alert-danger text-center">
+			<h4>エラーが発生しました</h4>
+			<p th:text="${errorMessage}">不明なエラーが発生しました。</p>
+		</div>
+
+		<div class="text-center mt-4">
+			<a th:href="@{/}" class="btn btn-outline-primary">ホームに戻る</a>
+		</div>
+
+	</div>
+
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</footer>
+</div>
+
+</body>
+</html>

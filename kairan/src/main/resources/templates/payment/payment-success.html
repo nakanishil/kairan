@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>支払い完了 - KAIRAN</title>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+</head>
+<body>
+    <div class="kairan-wrapper">
+
+        <div th:replace="~{fragment :: header}"></div>
+
+        <div class="container kairan-container d-flex justify-content-center">
+            <div class="card text-center shadow w-50 mt-5">
+                <div class="card-body">
+                    <h2 class="card-title text-success mb-3">支払いが完了しました！</h2>
+                    <p class="card-text">ご利用ありがとうございました。</p>
+                    <a th:href="@{/user/mypage}" class="btn btn-primary mt-3 px-4 py-2">
+                        マイページへ戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div th:replace="~{fragment :: footer}"></div>
+            <div th:replace="~{fragment :: scripts}"></div>
+        </footer>
+    </div>
+</body>
+</html>

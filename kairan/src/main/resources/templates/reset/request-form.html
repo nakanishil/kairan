@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<!-- メタ情報とスタイルを読み込み -->
+	<div th:replace="~{fragment :: meta}"></div>
+	<div th:replace="~{fragment :: styles}"></div>
+	<title>パスワード再発行申請 - KAIRAN</title>
+</head>
+
+<body>
+<div class="kairan-wrapper">
+	<div th:replace="~{fragment :: header}"></div>
+
+	<div class="container kairan-container mt-2">
+		
+		<!-- パンくずリスト -->
+		<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+			aria-label="breadcrumb">
+			<ol class="breadcrumb mb-0">
+				<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+				<li class="breadcrumb-item active" aria-current="page">パスワード再発行申請</li>
+			</ol>
+		</nav>
+
+		<!-- メッセージ -->
+		<div th:if="${successMessage}" class="alert alert-success">
+			<span th:text="${successMessage}"></span>
+		</div>
+		<div th:if="${errorMessage}" class="alert alert-danger">
+			<span th:text="${errorMessage}"></span>
+		</div>
+
+		<!-- フォーム -->
+		<div class="card shadow-sm mx-auto" style="max-width: 500px;">
+			<div class="card-body">
+				<h4 class="card-title mb-4 text-center">パスワード再発行申請</h4>
+
+				<form th:action="@{/reset/request}" method="post" th:object="${emailForm}">
+					<div class="mb-3">
+						<label for="email" class="form-label">登録済みメールアドレス</label>
+						<input type="email" th:field="*{email}" class="form-control" id="email" placeholder="example@example.com" required>
+						<div th:if="${#fields.hasErrors('email')}" class="text-danger small mt-1">
+							<p th:errors="*{email}"></p>
+						</div>
+					</div>
+					<div class="d-grid">
+						<button type="submit" class="btn btn-primary">再発行リンクを送信</button>
+					</div>
+				</form>
+
+				<div class="text-center mt-3">
+					<a th:href="@{/login}">ログイン画面に戻る</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- フッター -->
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</footer>
+</div>
+</body>
+</html>

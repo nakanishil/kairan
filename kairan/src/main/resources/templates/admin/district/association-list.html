@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <div th:replace="~{fragment :: meta}"></div>
+    <div th:replace="~{fragment :: styles}"></div>
+    <title>管轄町内会一覧 - KAIRAN</title>
+</head>
+<body>
+<div class="kairan-wrapper">
+    <!-- ヘッダー -->
+    <div th:replace="~{fragment :: header}"></div>
+
+    <div class="container kairan-container mt-2">
+        <!-- パンくずリスト -->
+        <nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                <li class="breadcrumb-item active" aria-current="page">管轄町内会一覧</li>
+            </ol>
+        </nav>
+
+        <!-- メッセージ -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        
+		<!-- タイトル -->
+		<h3 class="mb-2">管轄町内会一覧</h3>
+
+		<!-- 操作ボタン（タイトルの下、左寄せ） -->
+		<div class="mb-3">
+		    <a class="btn btn-primary" th:href="@{/admin/district/register-page}">
+		        ＋ 町内会を追加
+		    </a>
+		</div>
+
+
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+            <tr>
+                <th>町内会名</th>
+                <th>登録日</th>
+                <th>更新日</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="district : ${listPage.content}">
+                <td th:text="${district.association}"></td>
+                <td th:text="${#dates.format(district.createdAt, 'yyyy/MM/dd')}"></td>
+                <td th:text="${#dates.format(district.updatedAt, 'yyyy/MM/dd')}"></td>
+                <td class="text-center">
+                    <a class="btn btn-sm btn-outline-primary"
+                       th:href="@{/admin/district/association-detail/{id}(id=${district.id})}">詳細</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- ページネーション -->
+        <nav th:if="${listPage.totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${listPage.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/district/association-list(page=${listPage.number - 1})}">前</a>
+                </li>
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, listPage.totalPages - 1)}"
+                    th:classappend="${listPage.number == i} ? 'active'">
+                    <a class="page-link" th:href="@{/admin/district/association-list(page=${i})}" th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${listPage.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/district/association-list(page=${listPage.number + 1})}">次</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+    <!-- フッター -->
+    <footer>
+        <div th:replace="~{fragment :: footer}"></div>
+        <div th:replace="~{fragment :: scripts}"></div>
+    </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<!-- メタ情報とスタイルシートを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>会計一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<!-- ヘッダー -->
+		<div th:replace="~{fragment :: header}"></div>
+
+		<div class="container kairan-container mt-2">
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">会計一覧</li>
+				</ol>
+			</nav>
+
+
+			<h3 class="mb-4">会計一覧</h3>
+
+			<!-- メッセージ -->
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+			<div th:if="${errorMessage}" class="alert alert-danger">
+				<span th:text="${errorMessage}"></span>
+			</div>
+
+			<!-- 操作 -->
+
+			<div class="d-flex flex-wrap mb-4">
+				<div>
+					<a th:href="@{/accounting/register-page}" class="btn btn-primary me-2">
+						＋ 新規登録 </a>
+				</div>
+				<div>
+					<a
+						th:href="@{/accounting/csv(
+            					yearMonth=${yearMonth},
+            					type=${type},
+            					categoryId=${categoryId})}"
+						class="btn btn-success">CSV出力</a>
+				</div>
+			</div>
+
+
+			<!-- 検索フォーム -->
+			<form method="get" th:action="@{/accounting}" class="mb-4">
+				<div class="form-row d-flex flex-wrap align-items-end">
+
+					<!-- 年月検索 -->
+					<div class="form-group me-2 mb-2">
+						<label for="yearMonth" class="form-label">年月で検索:</label> <input
+							type="month" id="yearMonth" name="yearMonth"
+							th:value="${yearMonth != null ? yearMonth : ''}"
+							class="form-control" />
+					</div>
+
+					<!-- 収支区分検索 -->
+					<div class="form-group me-2 mb-2">
+						<label for="type" class="form-label">収支区分で検索:</label> <select
+							id="type" name="type" class="form-control">
+							<option value="">すべて</option>
+							<option th:value="収入" th:selected="${type?.name() == '収入'}">収入のみ</option>
+							<option th:value="支出" th:selected="${type?.name() == '支出'}">支出のみ</option>
+						</select>
+					</div>
+
+					<!-- カテゴリ検索 -->
+					<div class="form-group me-2 mb-2">
+						<label for="categoryId" class="form-label">カテゴリで検索:</label> <select
+							id="categoryId" name="categoryId" class="form-control">
+							<option value="">すべて</option>
+							<option th:each="category : ${categories}"
+								th:value="${category.id}" th:text="${category.name}"
+								th:selected="${categoryId != null and categoryId == category.id}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 検索ボタン -->
+					<div class="form-group me-2 mb-2">
+						<button type="submit" class="btn btn-primary">検索</button>
+					</div>
+
+					<!-- リセットボタン -->
+					<div class="form-group mb-2">
+						<a th:href="@{/accounting}" class="btn btn-secondary">リセット</a>
+					</div>
+
+				</div>
+			</form>
+
+
+			<!-- 操作系 -->
+
+			<div>
+				<p>
+					収入合計: <span
+						th:text="${#numbers.formatDecimal(sumIncome, 0, 'COMMA', 0, 'POINT')} + ' 円'">0円</span>
+				</p>
+				<p>
+					支出合計: <span
+						th:text="${#numbers.formatDecimal(sumExpense, 0, 'COMMA', 0, 'POINT')} + ' 円'">0円</span>
+				</p>
+				<p>
+					収支（収入 - 支出）: <span
+						th:text="${#numbers.formatDecimal(sumIncome.subtract(sumExpense), 0, 'COMMA', 0, 'POINT')} + ' 円'">0円</span>
+				</p>
+			</div>
+
+
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">取引日</th>
+						<th class="text-center">収入/支出</th>
+						<th class="text-center">カテゴリ</th>
+						<th class="text-center">金額</th>
+						<th class="text-center">作成日</th>
+						<th class="text-center">詳細</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="accounting : ${accountingPage.content}">
+						<td
+							th:text="${#temporals.format(accounting.transactionDate, 'yyyy-MM-dd')}"
+							class="ps-2"></td>
+						<td th:text="${accounting.type}" class="ps-2"></td>
+						<td th:text="${accounting.accountingCategory.name}" class="ps-2"></td>
+						<td
+							th:text="${#numbers.formatDecimal(accounting.amount, 1, 'COMMA', 0, 'POINT')} + '円'"
+							class="ps-2"></td>
+						<td
+							th:text="${#temporals.format(accounting.createdAt, 'yyyy-MM-dd HH:mm')}"
+							class="ps-2"></td>
+						<td class="text-center"><a class="btn btn-sm btn-outline-primary"
+							th:href="@{/accounting/detail/{id}(id=${accounting.id})}">詳細</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+
+			<!-- ページネーション -->
+			<nav th:if="${accountingPage.totalPages > 1}">
+				<ul class="pagination justify-content-center">
+					<!-- 前のページ -->
+					<li th:classappend="${accountingPage.first} ? 'disabled'"
+						class="page-item"><a class="page-link"
+						th:href="@{/accounting(
+                    page=${accountingPage.number-1},
+                    yearMonth=${yearMonth != null ? yearMonth : ''},
+                    type=${type != null ? type.name() : ''},
+                    categoryId=${categoryId != null ? categoryId : ''}
+                )}">前</a>
+					</li>
+
+					<!-- ページ番号 -->
+					<li class="page-item"
+						th:each="i : ${#numbers.sequence(0, accountingPage.totalPages-1)}"
+						th:classappend="${i == accountingPage.number} ? 'active'"><a
+						class="page-link"
+						th:href="@{/accounting(
+                    page=${i},
+                    yearMonth=${yearMonth != null ? yearMonth : ''},
+                    type=${type != null ? type.name() : ''},
+                    categoryId=${categoryId != null ? categoryId : ''}
+                )}"
+						th:text="${i+1}">1</a></li>
+
+					<!-- 次のページ -->
+					<li th:classappend="${accountingPage.last} ? 'disabled'"
+						class="page-item"><a class="page-link"
+						th:href="@{/accounting(
+                    page=${accountingPage.number+1},
+                    yearMonth=${yearMonth != null ? yearMonth : ''},
+                    type=${type != null ? type.name() : ''},
+                    categoryId=${categoryId != null ? categoryId : ''}
+                )}">次</a>
+					</li>
+				</ul>
+			</nav>
+
+
+		</div>
+	</div>
+
+	<!-- フッター -->
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+	</footer>
+	</div>
+</body>

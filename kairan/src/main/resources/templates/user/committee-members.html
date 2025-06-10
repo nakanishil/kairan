@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>町内会員一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">会員一覧(<span
+						th:text="${association} + ' - ' +${committeeName}"></span>)
+					</li>
+				</ol>
+			</nav>
+
+			<a
+				th:href="@{/user/committee-members/csv}"
+				class="btn btn-success mb-3">CSV出力</a>
+
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-center">氏名</th>
+						<th class="text-center">フリガナ</th>
+						<th class="text-center">役職</th>
+						<th class="text-center">委員</th>
+						<th class="text-center">電話番号</th>
+						<th class="text-center">住所</th>
+					</tr>
+				</thead>
+
+
+				<tbody>
+					<tr th:if="${userPage.content.isEmpty()}">
+						<td colspan="7" class="text-center">該当する会員は見つかりませんでした。</td>
+					</tr>
+					<tr th:each="user : ${userPage.content}">
+						<td class="ps-2" th:text="${user.name}">氏名</td>
+						<td class="ps-2" th:text="${user.furigana}">フリガナ</td>
+						<td class="ps-2" th:text="${#strings.replace(user.role.name, 'ROLE_', '')}">役職</td>
+						<td class="ps-2"
+							th:text="${user.committee != null ? user.committee.name : 'なし'}">委員</td>
+						<td class="ps-2" th:text="${user.phoneNumber}">電話番号</td>
+						<td class="ps-2" th:text="${user.address}">住所</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- ページネーション -->
+<nav th:if="${userPage.totalPages > 1}">
+	<ul class="pagination justify-content-center">
+		
+		<!-- 前のページ -->
+		<li th:classappend="${userPage.first} ? 'disabled'" class="page-item">
+			<a th:href="@{/user/committee-members(page=${userPage.number - 1})}" class="page-link">前</a>
+		</li>
+
+		<!-- ページ番号 -->
+		<li class="page-item"
+			th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+			th:classappend="${userPage.number == i} ? 'active'">
+			<a th:href="@{/user/committee-members(page=${i})}" class="page-link" th:text="${i + 1}">1</a>
+		</li>
+
+		<!-- 次のページ -->
+		<li th:classappend="${userPage.last} ? 'disabled'" class="page-item">
+			<a th:href="@{/user/committee-members(page=${userPage.number + 1})}" class="page-link">次</a>
+		</li>
+
+	</ul>
+</nav>
+
+
+
+		</div>
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+
+		</footer>
+	</div>
+</body>
+</html>

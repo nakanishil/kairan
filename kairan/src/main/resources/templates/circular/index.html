@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+<title>回覧板一覧 - KAIRAN</title>
+</head>
+<body>
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+
+			<div th:replace="~{fragment :: sign-in-name}"></div>
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">回覧板一覧</li>
+				</ol>
+			</nav>
+
+
+			<!-- メッセージ表示 -->
+			<p th:if="${message != null}" class="text-center text-muted"
+				th:text="${message}"></p>
+
+			<!-- データがある場合のみ表示 -->
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th class="text-center w-25">作成日</th>
+						<th class="text-center">タイトル</th>
+
+						<th class="text-center w-auto">詳細</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="circular : ${circularPage.content}">
+						<td class="ps-3 w-25"
+							th:text="${#dates.format(circular.createdAt, 'yyyy/MM/dd')}"></td>
+						<td class="ps-3">
+						 <span th:text="${circular.name}"></span>
+						 <span th:if="${circular.isUrgent}" class="badge bg-danger ms-2">緊急</span>
+						 <span th:if="${readMap[circular.id] == false}" class="badge bg-secondary ms-2">既読</span>
+						 </td>
+
+						<td class="text-center w-auto"><a
+							th:href="@{/circular/detail/{id}(id=${circular.id})}"
+							class="btn btn-sm btn-outline-primary"> 詳細 </a></td>
+					</tr>
+					<!-- データがない場合のメッセージ -->
+				</tbody>
+			</table>
+
+			<!-- ページネーション -->
+			<nav th:if="${circularPage.totalPages > 1}" class="mt-4">
+			  <ul class="pagination justify-content-center">
+
+			    <!-- 前 -->
+			    <li th:classappend="${circularPage.first} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/circular(page=${circularPage.number - 1})}">前</a>
+			    </li>
+
+			    <!-- ページ番号 -->
+			    <li class="page-item"
+			        th:each="i : ${#numbers.sequence(0, circularPage.totalPages - 1)}"
+			        th:classappend="${i == circularPage.number} ? 'active'">
+			      <a class="page-link"
+			         th:href="@{/circular(page=${i})}"
+			         th:text="${i + 1}">1</a>
+			    </li>
+
+			    <!-- 次 -->
+			    <li th:classappend="${circularPage.last} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/circular(page=${circularPage.number + 1})}">次</a>
+			    </li>
+
+			  </ul>
+			</nav>
+
+			
+			
+		</div>
+	</div>
+	<footer>
+		<div th:replace="~{fragment :: footer}"></div>
+		<div th:replace="~{fragment :: scripts}"></div>
+
+	</footer>
+</body>
+</html>

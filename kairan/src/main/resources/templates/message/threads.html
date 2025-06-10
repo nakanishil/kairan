@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+<!-- メタ情報とスタイルを読み込み -->
+<div th:replace="~{fragment :: meta}"></div>
+<div th:replace="~{fragment :: styles}"></div>
+
+<title>スレッド一覧 - KAIRAN</title>
+</head>
+<body>
+
+	<div class="kairan-wrapper">
+		<div th:replace="~{fragment :: header}"></div>
+		<div class="container kairan-container mt-2">
+			<div th:replace="~{fragment :: sign-in-role}"></div>
+
+			<!-- パンくずリスト -->
+			<nav class="mb-4" style="--bs-breadcrumb-divider: '>';"
+				aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0">
+					<li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+					<li class="breadcrumb-item active" aria-current="page">スレッド一覧(<span
+						th:text="${selectedBoardType.boardName}"></span>)
+					</li>
+				</ol>
+			</nav>
+			<p th:if="${message != null}" class="text-center text-muted"
+				th:text="${message}"></p>
+			<div th:if="${successMessage}" class="alert alert-success">
+				<span th:text="${successMessage}"></span>
+			</div>
+
+
+			<!-- スレッド作成ボタン（権限のあるユーザーのみ表示） -->
+			<div class="card mt-4"
+				th:if="${#strings.equals(userRole, 'ROLE_行政') and #strings.equals(selectedBoardType.boardName, '行政会長掲示板')} 
+                           or ${#strings.equals(userRole, 'ROLE_町内会長') and 
+                              (#strings.equals(selectedBoardType.boardName, '会長委員長掲示板') or #strings.equals(selectedBoardType.boardName, '会長区長掲示板'))}
+                           or ${#strings.equals(userRole, 'ROLE_委員長') and #strings.equals(selectedBoardType.boardName, '委員長委員掲示板')}
+                           or ${#strings.equals(userRole, 'ROLE_区長') and #strings.equals(selectedBoardType.boardName, '区長会員掲示板')}">
+
+				<div class="card-header bg-primary text-white">スレッドを作成</div>
+				<div class="card-body">
+					<form
+						th:action="@{/messages/threads/{boardTypeId}/create(boardTypeId=${selectedBoardType.id})}"
+						method="post" th:object="${threadForm}">
+
+						<input type="hidden" th:name="${_csrf.parameterName}"
+							th:value="${_csrf.token}" />
+
+						<!-- タイトル -->
+						<div class="mb-3">
+							<label for="title" class="form-label">スレッドタイトル (必須
+								60文字以内)</label> <input type="text" id="title" name="title"
+								class="form-control" th:field="*{title}"
+								placeholder="スレッドタイトルを入力">
+							<div class="text-danger" th:if="${#fields.hasErrors('title')}"
+								th:errors="*{title}"></div>
+						</div>
+
+						<!-- コメント -->
+						<div class="mb-3">
+							<label for="comment" class="form-label">内容 (必須 1,000文字以内)</label>
+							<textarea id="comment" name="comment" class="form-control"
+								rows="4" th:field="*{comment}" placeholder="最初のコメントを入力"></textarea>
+							<div class="text-danger" th:if="${#fields.hasErrors('comment')}"
+								th:errors="*{comment}"></div>
+						</div>
+
+						<button type="submit" class="btn btn-primary w-100">スレッドを作成</button>
+					</form>
+
+				</div>
+			</div>
+
+
+			<!-- スレッド一覧表示 -->
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>タイトル</th>
+						<th>投稿者</th>
+						<th>投稿日</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- スレッドがない場合のメッセージ -->
+					<tr th:if="${threads == null or #lists.isEmpty(threads)}">
+						<td colspan="3" class="text-center">スレッドがありません</td>
+					</tr>
+
+					<!-- スレッド一覧 -->
+					<tr th:each="thread : ${threads.content}">
+						<td><a th:if="${thread.id != null}"
+							th:href="@{/message/thread/{id}(id=${thread.id})}"
+							th:text="${thread.title != null ? thread.title : '（タイトルなし）'}"></a>
+							<span th:unless="${thread.id != null}">（無効なスレッド）</span></td>
+						<td th:text="${thread.user?.name ?: '不明な投稿者'}"></td>
+						<td
+							th:text="${thread.createdAt != null ? #dates.format(thread.createdAt, 'yyyy/MM/dd HH:mm') : '日時不明'}"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<!-- ページネーション -->
+			<nav th:if="${threads.totalPages > 1}" class="mt-4" aria-label="ページネーション">
+			  <ul class="pagination justify-content-center">
+
+			    <!-- 前のページ -->
+			    <li th:classappend="${threads.first} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/message/threads/{boardTypeId}(boardTypeId=${boardTypeId}, page=${threads.number - 1})}">
+			        前
+			      </a>
+			    </li>
+
+			    <!-- ページ番号 -->
+			    <li class="page-item"
+			        th:each="i : ${#numbers.sequence(0, threads.totalPages - 1)}"
+			        th:classappend="${i == threads.number} ? 'active'">
+			      <a class="page-link"
+			         th:href="@{/message/threads/{boardTypeId}(boardTypeId=${boardTypeId}, page=${i})}"
+			         th:text="${i + 1}">1</a>
+			    </li>
+
+			    <!-- 次のページ -->
+			    <li th:classappend="${threads.last} ? 'disabled'" class="page-item">
+			      <a class="page-link"
+			         th:href="@{/message/threads/{boardTypeId}(boardTypeId=${boardTypeId}, page=${threads.number + 1})}">
+			        次
+			      </a>
+			    </li>
+
+			  </ul>
+			</nav>
+
+
+		</div>
+
+		<!-- フッター -->
+		<footer>
+			<div th:replace="~{fragment :: footer}"></div>
+			<div th:replace="~{fragment :: scripts}"></div>
+		</footer>
+	</div>
+</body>
+</html>
