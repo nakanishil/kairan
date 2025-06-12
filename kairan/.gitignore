@@ -1,41 +1,91 @@
-HELP.md
+# Maven build artifacts
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
+# Eclipse and STS
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+# IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# Visual Studio Code
 .vscode/
 
-#======== 前略 ========
+# OS-specific files
+.DS_Store
+Thumbs.db
 
-### VS Code ###
-.vscode/
+# --- Application Configuration ---
+# 環境ごとの設定は除外したい場合のみ個別に書く（例：開発用）
+# 本番用や共通ファイルは除外しない
+/src/main/resources/application-local.properties
+/src/main/resources/application-secret.properties
 
-/src/main/resources/application.properties
-/src/main/resources/application-test.properties
+# 以下は Heroku で使用するので **除外しない**
+!src/main/resources/application-prod.properties
+!src/main/resources/application.yml
+!src/main/resources/data.sql
+!src/main/resources/schema.sql
+
+
+
+#HELP.md
+#target/
+#!.mvn/wrapper/maven-wrapper.jar
+#!**/src/main/**/target/
+#!**/src/test/**/target/
+#
+#### STS ###
+#.apt_generated
+#.classpath
+#.factorypath
+#.project
+#.settings
+#.springBeans
+#.sts4-cache
+#
+#### IntelliJ IDEA ###
+#.idea
+#*.iws
+#*.iml
+#*.ipr
+#
+#### NetBeans ###
+#/nbproject/private/
+#/nbbuild/
+#/dist/
+#/nbdist/
+#/.nb-gradle/
+#build/
+#!**/src/main/**/build/
+#!**/src/test/**/build/
+#
+#### VS Code ###
+#.vscode/
+#
+##======== 前略 ========
+#
+#### VS Code ###
+#.vscode/
+#
+#/src/main/resources/application.properties
+#/src/main/resources/application-test.properties
+#
+## .gitignore
+#src/main/resources/application.yml

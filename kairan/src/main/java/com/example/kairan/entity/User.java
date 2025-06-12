@@ -67,7 +67,7 @@ public class User {
 	private String googleId;
 	
 	@Column(name = "google_linked")
-	private boolean googleLinked;
+	private Boolean googleLinked;
 	
 	@Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	private Timestamp createdAt;

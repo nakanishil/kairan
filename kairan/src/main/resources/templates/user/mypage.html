@@ -74,11 +74,11 @@
 							</div>
 						</div>
 						<div class=" text-center mt-3">
-							<div th:if="${!user.googleLinked}">
+							<div th:if="${user != null and (user.googleLinked == null or !user.googleLinked)}">
 								<a href="/link/google" class="btn btn-outline-success">
 									Googleアカウントと連携する </a>
 							</div>
-							<div th:if="${user.googleLinked}">
+							<div th:if="${user != null and user.googleLinked == true}">
 								<button type="button" class="btn btn-secondary">✅ Googleアカウントと連携済みです</button>
 							</div>
 						</div>

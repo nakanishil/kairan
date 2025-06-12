@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -18,13 +17,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService implements OAuth2UserService{
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate; 
 	
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-	    OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(userRequest);
+		OAuth2User oauth2User = delegate.loadUser(userRequest);
 	    String googleId = oauth2User.getAttribute("sub");
 
 	    // --- セッション判定 ---
@@ -56,7 +56,7 @@ public class CustomOAuth2UserService implements OAuth2UserService{
 	        }
 	    }
 
-	    // --- 通常のGoogleログインフロー ---
+	    //  通常のGoogleログインフロー
 	    Optional<User> userOpt = userRepository.findByGoogleId(googleId);
 
 	    if (userOpt.isEmpty()) {
@@ -65,7 +65,7 @@ public class CustomOAuth2UserService implements OAuth2UserService{
 
 	    User user = userOpt.get();
 
-	    if (!user.isGoogleLinked()) {
+	    if (!user.getGoogleLinked()) {
 	        throw new OAuth2AuthenticationException("このアカウントはGoogleログイン未許可です。");
 	    }
 
