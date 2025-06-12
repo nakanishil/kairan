@@ -1,17 +1,17 @@
 html, body {
   height: 100%;
+  font-size: 20px;
 }
 
 body {
-	display: flex;
-	flex-direction: column;
-    background-color: #f8f9fa; /* 背景をグレーに */
+	font-size: 1rem; 
+    background-color: #f8f9fa; 
 }
 .kairan-container {
     background-color: #ffffff; /* コンテンツ部分は白 */
     padding: 20px;
-    border-radius: 8px; /* 角を少し丸く */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ちょっと影をつけると見栄え良し */
+    border-radius: 8px; /* 角を少し丸 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	max-width: 1000px;  /* フォームの幅を適度に制限 */
 	margin: 0 auto;    /* 中央寄せ */
 }
@@ -26,10 +26,14 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
+
 footer {
   margin-top: auto;
+  width: 100%;
+  /* ここから追加・修正 */
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem; /* 上下0.75rem、左右1rem */
+  /* ここまで */
 }
-
-

@@ -111,7 +111,7 @@ public class CircularController {
 	@GetMapping("/circular/control-page")
 	public String circularControlPage(
 			@AuthenticationPrincipal UserDetailsImpl userDetails,
-			@PageableDefault(size = 20)Pageable pageable,
+			@PageableDefault(size = 5)Pageable pageable,
 			Model model)
 	{
 		User loginUser = userDetails.getUser();
